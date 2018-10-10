@@ -11,7 +11,7 @@ int MIN_OCUP = ORDEM - 1; // OCUPAÇÃO MINIMA EM CADA NÓ
 
 /* Estrutura dos nós das árvores */
 typedef struct no_arvoreB {
-  struct no_arvoreB *arvoreB;
+  int isLeaf;
   int num_chaves; // quantidades de chaves contidas no nó
   int chaves[MAX_CHAVES]; //Chaves armazenadas no nó
   struct no_arvoreB *filhos[MAX_FILHOS]; //Ponteiro para filhos
@@ -49,6 +49,17 @@ int main(void){
 
   return 0;
 }
+
+no_arvoreB criarArvore(void)
+{
+  no_arvoreB raiz; 
+  b = malloc(sizeof(*raiz));
+  assert(raiz); 
+  b->isLeaf = 1;
+  b->num_chaves = MAX_CHAVES;
+  return b;
+}
+ 
 
 //insere uma chave e o ponteiro para o filho da direita em um nó
 void insere_chave(arvoreB *raiz,int info, arvoreB *filhodir)
