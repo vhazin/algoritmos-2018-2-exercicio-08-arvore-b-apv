@@ -114,6 +114,57 @@ arvoreB *insere_arvoreB(arvoreB *raiz,int info)
   else return(raiz);
 }
 
+int busca_binaria(arvoreB *no,int info){
+  int meio,i,f;
+  
+  i = 0;
+  f = no->num_chaves-1;
+
+  while (i <= f)
+  {
+    meio = (i + f) /2;
+    if(no->chaves[meio] == info)
+      return(meio); //encontrou. retorna a posição em que a chave está.
+    else if (no->chaves[meio] > info)
+      f = meio - 1;
+      else i = meio + 1;
+  }
+  return (i); // não encontrou. retorna a posição do ponteiro para o filho.
+
+}
+bool busca(arvoreB *raiz,int info)
+{
+  arvoreB *no;
+  int pos; //posição retornada pelo busca binaria.
+
+  no = raiz;
+  while (no != NULL)
+  {
+    pos = busca_binaria(no,info);
+    if (pos < no->num_chaves && no->chaves[pos] == info)
+      return(true);
+    else no = no->filhos[pos];
+  }
+  return(false);
+
+}
+
+//Algoritmo de varredura em ordem
+
+void em_ordem(arvoreB *raiz)
+{
+  int i;
+  if (raiz != NULL)
+  {
+    for (i = 0; i < raiz->num_chaves; i++)
+    {
+      em_ordem(raiz->filhos[i]);
+      printf("\n%d", raiz->chaves[i]);
+    }
+    em_ordem(raiz->filhos[i]);
+  }
+}
+
 int main(void){
 
 
