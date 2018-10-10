@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ORDEM 4
+#define ORDEM 5
 
 typedef struct no{
     int num_chaves;
