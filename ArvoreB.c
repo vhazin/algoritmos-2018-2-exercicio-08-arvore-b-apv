@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+
 const ORDEM = 2;
   MAX_CHAVES = 2 * ORDEM - 1; //QUANTIDADE MÁXIMA DE CHAVES
   MAX_FILHOS = 2 * ORDEM; // QUANTIDADE MÁXIMA DE FILHOS
