@@ -2,18 +2,54 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include<conio.h>
 
 int ORDEM = 2;
 int MAX_CHAVES = 2 * ORDEM - 1; //QUANTIDADE MÁXIMA DE CHAVES
 int MAX_FILHOS = 2 * ORDEM; // QUANTIDADE MÁXIMA DE FILHOS
 int MIN_OCUP = ORDEM - 1; // OCUPAÇÃO MINIMA EM CADA NÓ
 
+/* Estrutura dos nós das árvores */
 typedef struct no_arvoreB {
   struct no_arvoreB *arvoreB;
   int num_chaves; // quantidades de chaves contidas no nó
   int chaves[MAX_CHAVES]; //Chaves armazenadas no nó
   struct no_arvoreB *filhos[MAX_FILHOS]; //Ponteiro para filhos
 } arvoreB;
+
+/* Protótiopos das funções */
+insertArv(no raiz, int chave);
+printArv(no raiz);
+
+int main(void){
+  clrscr();
+  int val, ch;
+      while (1) {
+              printf("1. Inserir um nó na Árvore B\n");
+              printf("2. Imprimir a Árvore B\n");
+              printf("3. Sair\n");
+              scanf("%d", &ch);
+              switch (ch) {
+                      case 1:
+                              printf("Digite sua chave:");
+                              scanf("%d", &val);
+                              insertArv(*raiz, val);
+                              break;
+                      case 2:
+                              printArv(*raiz);
+                              break;
+                      case 3:
+                              exit(0);
+                      default:
+                              printf("Você escolheu uma opção inválida!!\n");
+                              break;
+              }
+              printf("\n");
+      }
+
+  return 0;
+}
+
 //insere uma chave e o ponteiro para o filho da direita em um nó
 void insere_chave(arvoreB *raiz,int info, arvoreB *filhodir)
 {
@@ -82,10 +118,4 @@ arvoreB *insere(arvoreB *raiz,int info,bool *h,int *info_retorno)
   }
 
 
-}
-
-int main(void){
-
-
-  return 0;
 }
