@@ -19,8 +19,8 @@ typedef struct no_arvoreB {
 } arvoreB;
 
 /* Protótiopos das funções */
-insertArv(no raiz, int chave);
-printArv(no raiz);
+insertArv(no_arvoreB *raiz, int chave);
+printArv(no_arvoreB *raiz);
 
 int main(void){
   clrscr();
@@ -139,7 +139,7 @@ arvoreB *insere(arvoreB *raiz,int info,bool *h,int *info_retorno)
   }
 }
 
-arvoreB *insere_arvoreB(arvoreB *raiz,int info)
+arvoreB *insertArv(arvoreB *raiz,int info)
 {
   bool h;
   int info_retorno,i;
