@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <conio.h>
 
 
 const ORDEM = 2;
@@ -23,7 +22,6 @@ insertArv(no_arvoreB *raiz, int chave);
 printArv(no_arvoreB *raiz);
 
 int main(void){
-  clrscr();
   int val, ch;
       while (1) {
               printf("1. Inserir um nó na Árvore B\n");
@@ -207,5 +205,15 @@ void em_ordem(arvoreB *raiz)
       printf("\n%d", raiz->chaves[i]);
     }
     em_ordem(raiz->filhos[i]);
+  }
+}
+
+void printArv(arvoreB raiz){
+  for(int interacao = 0; interacao < MAX_FILHOS; interacao++){
+    printf("(");
+    for(int interacaoFilho = 0; interacaoFilho < MAX_FILHOS; interacaoFilho++){
+      printf("%d |", raiz->chaves[interacao][interacaoFilho]);
+    }
+    printf(")");
   }
 }
