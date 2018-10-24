@@ -10,7 +10,7 @@ const ORDEM = 2;
   MAX_FILHOS = 2 * ORDEM; // QUANTIDADE MÁXIMA DE FILHOS
   MIN_OCUP = ORDEM - 1; // OCUPAÇÃO MINIMA EM CADA NÓ
 
-/* Estrutura dos nós das árvores */
+/* Estrutura dos nós das árvores */ // trocar a branch
 typedef struct no_arvoreB {
   int isLeaf;
   int num_chaves; // quantidades de chaves contidas no nó
