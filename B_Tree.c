@@ -1,43 +1,51 @@
-# include <stdio.h>
-# include <stdlib.h>
-#define M 3
+#include <stdio.h>
+#include <stdlib.h>
+#define ORDEM 3
 
-struct node {
-    int n; /* n < M No. of keys in node will always less than order of B tree */
-    int keys[M - 1]; /*array of keys*/
-    struct node *p[M]; /* (n+1 pointers will be in use) */
-}*root=NULL;
+struct node
+{
+    int n;                 // Chaves do nó
+    int keys[ORDEM - 1];   // Array de chaves
+    struct node *p[ORDEM]; // Filhos da árvore
+} *root = NULL;
 
-enum KeyStatus { Duplicate,SearchFailure,Success,InsertIt,LessKeys };
+enum KeyStatus
+{
+    Duplicate,
+    SearchFailure,
+    Success,
+    InsertIt,
+    LessKeys
+};
 
 void insert(int key);
-void display(struct node *root,int);
-enum KeyStatus ins(struct node *r, int x, int* y, struct node** u);
-int searchPos(int x,int *key_arr, int n);
-
-
+void display(struct node *root, int);
+enum KeyStatus ins(struct node *r, int x, int *y, struct node **u);
+int searchPos(int x, int *key_arr, int n);
 
 int main()
 {
     int key, choice;
-    
-    printf("Criação de árvore B para ordem = %d\n", M);
-    while(1)
+
+    printf("Criação de árvore B para ordem = %d\n", ORDEM);
+    while (1)
     {
-        printf("1.Insert\n");
-        printf("2.Display\n");
-        printf("3.Quit\n");
-        printf("Enter your choice : ");
-        scanf("%d", &choice); 
-        switch(choice)
+        printf("\n");
+        printf("1 -> Inserir\n");
+        printf("2 -> Imprimir árvore\n");
+        printf("3 -> Sair\n");
+        printf("\n");
+        printf("Informe sua escolha: ");
+        scanf("%d", &choice);
+        switch (choice)
         {
         case 1:
-            printf("Enter the key : ");
-            scanf("%d", &key); 
+            printf("Informe a chave: ");
+            scanf("%d", &key);
             insert(key);
             break;
         case 2:
-            printf("Btree is :\n");
+            printf("A ávore é:\n");
             display(root, 0);
             break;
         case 3:
@@ -62,17 +70,17 @@ void insert(int key)
     {
         struct node *uproot = root;
         root = malloc(sizeof(struct node));
-        root -> n = 1;
-        root -> keys[0] = upKey;
-        root -> p[0] = uproot;
-        root -> p[1] = newnode;
+        root->n = 1;
+        root->keys[0] = upKey;
+        root->p[0] = uproot;
+        root->p[1] = newnode;
     }
 }
 
-enum KeyStatus ins(struct node *ptr, int key, int *upKey,struct node **newnode)
+enum KeyStatus ins(struct node *ptr, int key, int *upKey, struct node **newnode)
 {
     struct node *newPtr, *lastPtr;
-    int pos, i, n,splitPos;
+    int pos, i, n, splitPos;
     int newKey, lastKey;
     enum KeyStatus value;
     if (ptr == NULL)
@@ -81,63 +89,62 @@ enum KeyStatus ins(struct node *ptr, int key, int *upKey,struct node **newnode)
         *upKey = key;
         return InsertIt;
     }
-    n = ptr -> n;
-    pos = searchPos(key, ptr -> keys, n);
-    if (pos < n && key == ptr -> keys[pos])
+    n = ptr->n;
+    pos = searchPos(key, ptr->keys, n);
+    if (pos < n && key == ptr->keys[pos])
         return Duplicate;
-    value = ins(ptr -> p[pos], key, &newKey, &newPtr);
+    value = ins(ptr->p[pos], key, &newKey, &newPtr);
     if (value != InsertIt)
         return value;
-    /*If keys in node is less than M-1 where M is order of B tree*/
-    if (n < M - 1)
+
+    if (n < ORDEM - 1)
     {
-        pos = searchPos(newKey, ptr -> keys, n);
-        /*Shifting the key and pointer right for inserting the new key*/
+        pos = searchPos(newKey, ptr->keys, n);
         for (i = n; i > pos; i--)
         {
-            ptr -> keys[i] = ptr -> keys[i - 1];
-            ptr -> p[i + 1] = ptr -> p[i];
+            ptr->keys[i] = ptr->keys[i - 1];
+            ptr->p[i + 1] = ptr->p[i];
         }
-        /*Key is inserted at exact location*/
-        ptr -> keys[pos] = newKey;
-        ptr -> p[pos + 1] = newPtr;
-        ++ptr -> n; /*incrementing the number of keys in node*/
+        // Chave é inserida na posição correta
+        ptr->keys[pos] = newKey;
+        ptr->p[pos + 1] = newPtr;
+        ++ptr->n; // Incrementando o número de chaves do nó
         return Success;
-    }/*End of if */
-    /*If keys in nodes are maximum and position of node to be inserted is last*/
-    if (pos == M - 1)
+    }
+    // Se a chave do nó for a máxima e a posição for a ultima
+    if (pos == ORDEM - 1)
     {
         lastKey = newKey;
         lastPtr = newPtr;
     }
-    else /*If keys in node are maximum and position of node to be inserted is not last*/
+    else // Se a chave do nó for a máxima e a posição não for a ultima
     {
-        lastKey = ptr -> keys[M - 2];
-        lastPtr = ptr -> p[M - 1];
-        for (i = M - 2; i > pos; i--)
+        lastKey = ptr->keys[ORDEM - 2];
+        lastPtr = ptr->p[ORDEM - 1];
+        for (i = ORDEM - 2; i > pos; i--)
         {
-            ptr -> keys[i] = ptr -> keys[i - 1];
-            ptr -> p[i + 1] = ptr -> p[i];
+            ptr->keys[i] = ptr->keys[i - 1];
+            ptr->p[i + 1] = ptr->p[i];
         }
-        ptr -> keys[pos] = newKey;
-        ptr -> p[pos+1] = newPtr;
+        ptr->keys[pos] = newKey;
+        ptr->p[pos + 1] = newPtr;
     }
-    splitPos = (M - 1) / 2;
-    (*upKey) = ptr -> keys[splitPos];
+    splitPos = (ORDEM - 1) / 2;
+    (*upKey) = ptr->keys[splitPos];
 
-    (*newnode) = malloc(sizeof(struct node));/*Nó direito depois da partição*/
-    ptr -> n = splitPos; /*Número de chaves do nó particionado à esquerda*/
-    (*newnode) -> n = M - 1 - splitPos;/*Número de chaves do nó particionado à direita*/
-    for (i = 0; i < (*newnode) -> n; i++)
+    (*newnode) = malloc(sizeof(struct node)); // Nó direito depois da partição*/
+    ptr->n = splitPos;                        // Número de chaves do nó particionado à esquerda
+    (*newnode)->n = ORDEM - 1 - splitPos;     // Número de chaves do nó particionado à direita
+    for (i = 0; i < (*newnode)->n; i++)
     {
-        (*newnode) -> p[i] = ptr -> p[i + splitPos + 1];
+        (*newnode)->p[i] = ptr->p[i + splitPos + 1];
 
-        if(i < (*newnode) -> n - 1)
-            (*newnode) -> keys[i] = ptr -> keys[i + splitPos + 1];
+        if (i < (*newnode)->n - 1)
+            (*newnode)->keys[i] = ptr->keys[i + splitPos + 1];
         else
-            (*newnode) -> keys[i] = lastKey;
+            (*newnode)->keys[i] = lastKey;
     }
-    (*newnode) -> p[(*newnode) -> n] = lastPtr;
+    (*newnode)->p[(*newnode)->n] = lastPtr;
     return InsertIt;
 }
 
@@ -146,13 +153,13 @@ void display(struct node *ptr, int blanks)
     if (ptr)
     {
         int i;
-        for(i = 1; i <= blanks; i++)
+        for (i = 1; i <= blanks; i++)
             printf(" ");
-        for (i = 0; i < ptr -> n; i++)
-            printf("%d ",ptr -> keys[i]);
+        for (i = 0; i < ptr->n; i++)
+            printf("%d ", ptr->keys[i]);
         printf("\n");
-        for (i = 0; i <= ptr -> n; i++)
-            display(ptr -> p[i], blanks + 10);
+        for (i = 0; i <= ptr->n; i++)
+            display(ptr->p[i], blanks + 10);
     }
 }
 
