@@ -9,6 +9,7 @@ struct node
     struct node *p[ORDEM]; // Filhos da árvore
 } *root = NULL;
 
+// Enum para verificação da inserção da chave que ocorrerá na função ENUM KeyStatus
 enum KeyStatus
 {
     Duplicate,
