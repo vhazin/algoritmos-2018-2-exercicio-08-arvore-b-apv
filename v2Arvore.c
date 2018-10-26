@@ -4,25 +4,23 @@
 #include <stdbool.h>
 
 
-const ORDEM = 2;
-  MAX_CHAVES = 2 * ORDEM - 1; //QUANTIDADE MÁXIMA DE CHAVES
-  MAX_FILHOS = 2 * ORDEM; // QUANTIDADE MÁXIMA DE FILHOS
-  MIN_OCUP = ORDEM - 1; // OCUPAÇÃO MINIMA EM CADA NÓ
+#define ORDEM 2
 
-/* Estrutura dos nós das árvores */ // trocar a branch
+/* Estrutura dos nós das árvores */
 typedef struct no_arvoreB {
   int isLeaf;
   int num_chaves; // quantidades de chaves contidas no nó
-  int chaves[MAX_CHAVES]; //Chaves armazenadas no nó
-  struct no_arvoreB *filhos[MAX_FILHOS]; //Ponteiro para filhos
+  int chaves[2 * ORDEM - 1]; //Chaves armazenadas no nó
+  struct no_arvoreB *filhos[2 * ORDEM]; //Ponteiro para filhos
 } arvoreB;
 
 /* Protótiopos das funções */
-insertArv(no_arvoreB *raiz, int chave);
-printArv(no_arvoreB *raiz);
+arvoreB *insertArv(arvoreB *raiz, int chave);
+void printArv(arvoreB *raiz);
 
 int main(void){
   int val, ch;
+  arvoreB *raiz;
       while (1) {
               printf("1. Inserir um nó na Árvore B\n");
               printf("2. Imprimir a Árvore B\n");
@@ -32,10 +30,11 @@ int main(void){
                       case 1:
                               printf("Digite sua chave:");
                               scanf("%d", &val);
-                              insertArv(*raiz, val);
+                              insertArv(raiz, val);
                               break;
                       case 2:
-                              printArv(*raiz);
+                              printf("%d", raiz->chaves[0]);
+                              //printArv(raiz);
                               break;
                       case 3:
                               exit(0);
@@ -49,19 +48,18 @@ int main(void){
   return 0;
 }
 
-no_arvoreB criarArvore(void)
+arvoreB* criarArvore(void)
 {
-  no_arvoreB raiz; 
-  b = malloc(sizeof(*raiz));
-  assert(raiz); 
+  arvoreB raiz; 
+  arvoreB *b = (arvoreB *)malloc(sizeof(raiz));
   b->isLeaf = 1;
-  b->num_chaves = MAX_CHAVES;
+  b->num_chaves = (2 * ORDEM - 1);
   return b;
 }
  
 
 //insere uma chave e o ponteiro para o filho da direita em um nó
-void insere_chave(arvoreB *raiz,int info, arvoreB *filhodir)
+arvoreB insere_chave(arvoreB *raiz,int info, arvoreB *filhodir)
 {
   int k,pos;
   
@@ -80,10 +78,12 @@ void insere_chave(arvoreB *raiz,int info, arvoreB *filhodir)
   raiz-> chaves[pos] = info;
   raiz-> filhos[pos+1] = filhodir;
   raiz->num_chaves++;
+
+  return *raiz;
 }
 
 //realiza a busca do nó para inserar a chave e faz as subdivisões quando necessárias
-arvoreB *insere(arvoreB *raiz,int info,bool *h,int *info_retorno)
+arvoreB *insere(arvoreB *raiz,int info,int *info_retorno)
 {
   int i,j,pos,info_mediano; //auxiliar para armazenar a chave que irá subir para o pai
   arvoreB *temp, *filho_dir; //ponteiro para o filho e direita da chave
@@ -91,7 +91,7 @@ arvoreB *insere(arvoreB *raiz,int info,bool *h,int *info_retorno)
   if (raiz == NULL)
   {
     //O nó anterior é o ideal para inserar a nova chave (chegou em um nó folha)
-    *h = true;
+    raiz->isLeaf = 1;
     *info_retorno = info;
     return(NULL);
   }else{
@@ -99,60 +99,61 @@ arvoreB *insere(arvoreB *raiz,int info,bool *h,int *info_retorno)
     if (raiz->num_chaves > pos && raiz->chaves[pos] == info)
     {
       printf("chave ja está contida na arvore");
-      *h = false;
+      raiz->isLeaf = 0;
     }else{
       //Overflow. Precisa subdividir
       temp = (arvoreB *) malloc(sizeof(arvoreB));
       temp->num_chaves = 0;
 
       //incializa filhos com NULL
-      for (i = 0; i < MAX_FILHOS; i++)
+      for (i = 0; i < 2 * ORDEM; i++)
       temp->filhos[i] = NULL;
 
       //elemento mediano que vai subir para o pai
-      info_mediano = raiz->chaves[MIN_OCUP];
+      info_mediano = raiz->chaves[ORDEM - 1];
 
       //insere metade do nó raiz no temp(efetua subdivisão)
-      temp->filhos[0] = raiz->filhos[MIN_OCUP+1];
-      for (i = MIN_OCUP + 1; i < MAX_CHAVES; i++)
+      temp->filhos[0] = raiz->filhos[ORDEM - 1+1];
+      for (i = ORDEM - 1 + 1; i < (2 * ORDEM - 1); i++)
         insere_chave(temp,raiz->chaves[i], raiz->filhos[i+1]);
 
       //atualiza nó raiz.
-      for (i = MIN_OCUP; i<MAX_CHAVES; i++)
+      for (i = ORDEM - 1; i<(2 * ORDEM - 1); i++)
       {
         raiz->chaves[i] = 0;
         raiz->filhos[i+1] = NULL;
       }
-      raiz->num_chaves = MIN_OCUP;
+      raiz->num_chaves = ORDEM - 1;
 
       //verifica em qual nó será inserida a nova chave
-      if (pos <= MIN_OCUP)
+      if (pos <= ORDEM - 1)
         insere_chave(raiz, *info_retorno,filho_dir);
       else insere_chave(temp,*info_retorno,filho_dir);
 
       //retorna o mediano para inserí-lo no nó pai e o temp como filho direito do mediano.
       *info_retorno = info_mediano;
-      return(temp);
+      return temp;
     }
   }
 }
 
 arvoreB *insertArv(arvoreB *raiz,int info)
 {
-  bool h;
   int info_retorno,i;
   arvoreB *filho_dir,*nova_raiz;
 
-  filho_dir = insere(raiz,info,&h,&info_retorno);
-  if (h)
+  filho_dir = insere(raiz,info,&info_retorno);
+  printf("f");
+  if (raiz->isLeaf)
   { //Aumentará a altura da àrvore
   nova_raiz = (arvoreB *)malloc(sizeof(arvoreB));
   nova_raiz->num_chaves = 1;
   nova_raiz->chaves[0] = info_retorno;
   nova_raiz->filhos[0] = raiz;
   nova_raiz->filhos[1] = filho_dir;
-  for (i =2; i<= MAX_CHAVES; i++)
+  for (i =2; i<= (2 * ORDEM - 1); i++){
     nova_raiz->filhos[i] = NULL;
+    }
     return(nova_raiz);
   }
   else return(raiz);
@@ -208,12 +209,16 @@ void em_ordem(arvoreB *raiz)
   }
 }
 
-void printArv(arvoreB raiz){
-  for(int interacao = 0; interacao < MAX_FILHOS; interacao++){
-    printf("(");
-    for(int interacaoFilho = 0; interacaoFilho < MAX_FILHOS; interacaoFilho++){
-      printf("%d |", raiz->chaves[interacao][interacaoFilho]);
+void printArv(arvoreB *raiz){
+  for(int interacao = 0; interacao < raiz->num_chaves; interacao++){
+    printf("%d", raiz->chaves[interacao]);
+  }
+  for(int i=0; i<= raiz->num_chaves; i++){
+    printArv(raiz->filhos[i]);
+  }
+    /*for(int interacaoFilho = 0; interacaoFilho < 2 * ORDEM; interacaoFilho++){
+      printf("%d |", raiz->chaves[interacaoFilho]);
     }
     printf(")");
-  }
+  }*/
 }
